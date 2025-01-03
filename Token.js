@@ -29,7 +29,10 @@ export class TokenCreator {
     }
 
     async createTokenTransaction(config) {
-        const mintKeypair = Keypair.fromSecretKey(new Uint8Array([29,234,164,68,222,58,121,38,248,112,47,208,47,77,64,164,120,102,118,64,137,158,10,106,236,138,140,147,119,141,129,40,8,56,124,193,216,253,209,95,40,90,64,171,195,191,21,179,237,17,65,202,11,172,49,200,173,72,35,230,79,201,15,239]))
+        console.log(config);
+         
+        const mintKeypair = Keypair.fromSecretKey(bs58.decode(config.mintPrivateKey))
+        
 
         console.log(mintKeypair.publicKey.toBase58())
 
@@ -77,7 +80,8 @@ export class TokenCreator {
                 },
                 amount: params.amount || 0,
                 slippage: params.slippage || 10,
-                priorityFee: params.priorityFee || 0.0005
+                priorityFee: params.priorityFee || 0.0005,
+                mintPrivateKey: params.mintPrivateKey
             });
 
             return `https://solscan.io/tx/${signature}`;

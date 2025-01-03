@@ -6,6 +6,8 @@ import sharp from "sharp";
 import terminalImage from "terminal-image";
 import { randomInt } from "crypto";
 import inquirer from "inquirer";
+import TokenCreator from "./token.js";
+import * as fs from "fs";
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -121,7 +123,7 @@ async function combineImagesWithEffects() {
         background: { r: 0, g: 0, b: 0, alpha: 0 },
       },
     });
-    const focusedIndex = Math.floor(Math.random() * processedImages.length);
+    const focusedIndex = Math.floor(Math.random() * processedImages.length)+1;
 
     // Create composite operations with random opacities and rotations
     const compositeOperations = processedImages.map((img, index) => {
@@ -255,17 +257,6 @@ program
       console.log(gradient(["#FFD700", "#FFA500", "#FF8C00"])(asciiArt));
       await sleep(800);
 
-
-      for(let i = 0; i < 100; i ++)
-
-      {
-        await typeText("☀️ Creating token image...", 40);
-        const processedImage = await combineImagesWithEffects();
-        await processedImage.toFile("output.png");
-        displayImage("output.png");
-  
-        await sleep(1000);
-      }
       await typeText("☀️ Creating your token on the directory of sun...", 40);
 
       // Create sun animator instance
@@ -277,10 +268,13 @@ program
       );
 
       // Make the API request
-      const response = await fetch("http://localhost:3000/api/generate-token", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
+      const response = await fetch(
+        "https://api.heliost.ai/api/generate-token",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
       // Stop the animation after the request completes
       sunAnimator.stop();
@@ -302,17 +296,32 @@ program
         await sleep(200);
       }
 
-      await typeText("☀️ Creating token image...", 40);
-      const processedImage = await combineImagesWithEffects();
-      await processedImage.toFile("output.png");
-      displayImage("output.png");
+      let satisfied = false;
 
-      await sleep(1000);
+      while (!satisfied) {
+        await typeText("☀️ Creating token image... (output.png) ", 40);
+        const processedImage = await combineImagesWithEffects();
+        await processedImage.toFile("output.png");
+        await displayImage("output.png");
+
+        const { wantToRegenerate } = await inquirer.prompt([
+          {
+            type: "confirm",
+            name: "wantToRegenerate",
+            message: "☀️ Would you like to regenerate the image? (output.png) ",
+            default: false,
+          },
+        ]);
+
+        satisfied = !wantToRegenerate;
+      }
 
       await typeText(
         "\n☀️ Image generation complete. Preparing deployment...",
         40
       );
+
+      
       const walletInfo = await collectWalletInfo();
 
       await typeText("\n☀️ Initiating deployment sequence...", 40);
@@ -323,25 +332,34 @@ program
         "Deploying your token to Solana..."
       );
 
-      // Deploy with wallet info and initial buy
-      const deployResponse = await fetch("http://localhost:3000/api/deploy", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...params,
-          developerPublicKey: walletInfo.publicKey,
-          developerPrivateKey: walletInfo.privateKey,
-          initialBuy: walletInfo.initialBuy,
-        }),
+      const tokenCreator = new TokenCreator(
+        "https://api.mainnet-beta.solana.com",
+        walletInfo.privateKey
+      );
+      const imageFile = await fs.openAsBlob("./output.png");
+
+      console.log(params.privateKey);
+      const tokenCreationResult = await tokenCreator.createToken({
+        imageFile,
+        name: params.name,
+        symbol: params.symbol,
+        description: params.description,
+        twitter: "",
+        telegram: "",
+        website: params.website,
+        publicKey: walletInfo.publicKey,
+        mintPrivateKey: params.privateKey,
+        amount: walletInfo.initialBuy,
+        slippage: 20,
+        priorityFee: 0.0005,
       });
+      console.log("Token created successfully!");
+
+      console.log("Transaction URL:", tokenCreationResult);
 
       // Stop the deployment animation
       deployAnimator.stop();
 
-      if (!deployResponse.ok) throw new Error("Deployment failed");
-      const result = await deployResponse.json();
-
-      console.log(chalk.white("\n=== Deployment Successful! ==="));
       await typeText("☀️ Your token is now live on Solana", 40);
       await typeText(
         `☀️ Initial buy of ${walletInfo.initialBuy} SOL processed`,
