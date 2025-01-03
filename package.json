@@ -1,7 +1,11 @@
 {
   "name": "heliost-cli",
   "version": "1.0.0",
-  "description": "CLI for deploying tokens on Solana",
+  "description": "CLI for deploying tokens AI on Solana",
+  "main": "index.js",
+  "keywords": ["solana", "token", "ai", "cli", "heliost", "helios"],
+  "author": "Heliost",
+  "license": "MIT",
   "bin": {
     "helios": "./index.js"
   },
