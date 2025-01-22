@@ -1,13 +1,20 @@
 {
-  "name": "heliost-cli",
+  "name": "heliost",
   "version": "1.0.0",
   "description": "CLI for deploying tokens AI on Solana",
   "main": "index.js",
-  "keywords": ["solana", "token", "ai", "cli", "heliost", "helios"],
+  "keywords": [
+    "solana",
+    "token",
+    "ai",
+    "cli",
+    "heliost",
+    "helios"
+  ],
   "author": "Heliost",
   "license": "MIT",
   "bin": {
-    "helios": "./index.js"
+    "heliost": "./index.js"
   },
   "type": "module",
   "dependencies": {
@@ -23,5 +30,11 @@
     "node-fetch": "^3.3.2",
     "sharp": "^0.33.5",
     "terminal-image": "^3.0.0"
-  }
+  },
+  "files": [
+    "index.js",
+    "cli.js",
+    "token.js",
+    "images/*"
+  ]
 }

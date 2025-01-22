@@ -1,4 +1,3 @@
-
 import { program } from "commander";
 import chalk from "chalk";
 import figlet from "figlet";
@@ -26,27 +25,30 @@ async function combineImagesWithEffects() {
   try {
     const TARGET_SIZE = 500;
 
-    const loadImage = async (path) => {
+    const loadImage = async (url) => {
       try {
-        return await sharp(path)
+        const response = await fetch(url);
+        const arrayBuffer = await response.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        return await sharp(buffer)
           .resize(TARGET_SIZE, TARGET_SIZE, {
             fit: "cover",
             position: "center",
           })
           .toBuffer();
       } catch (err) {
-        throw new Error(`Failed to load image ${path}: ${err.message}`);
+        throw new Error(`Failed to load image ${url}: ${err.message}`);
       }
     };
-
-    const imagePaths = [
-      "./images/1.png",
-      "./images/2.png",
-      "./images/3.png",
-      "./images/4.png",
-      "./images/5.jpg",
-      "./images/6.jpg",
-      "./images/7.jpg",
+    const imageUrls = [
+      "https://i.imgur.com/CbnF25Z.jpeg",
+      "https://i.imgur.com/FltyqrD.jpeg",
+      "https://i.imgur.com/gZT7VQp.jpeg",
+      "https://i.imgur.com/SABbazl.jpeg",
+      "https://i.imgur.com/BNVLRYG.jpeg",
+      "https://i.imgur.com/ymUYNJ4.jpeg",
+      "https://i.imgur.com/8Qb1zey.jpeg",
     ];
 
     const shuffleArray = (array) => {
@@ -59,16 +61,8 @@ async function combineImagesWithEffects() {
     };
 
     const images = await Promise.all(
-      shuffleArray(imagePaths).map((path) => loadImage(path).catch(() => null))
-    ).then((results) => {
-      const validImages = results.filter((img) => img !== null);
-      if (validImages.length === 0) {
-        throw new Error(
-          "No valid images found. Please ensure images exist and are in correct format."
-        );
-      }
-      return validImages;
-    });
+      shuffleArray(imageUrls).map((url) => loadImage(url).catch(() => null))
+    );
     // Function to apply random effects to a single image
     const applyRandomEffectsToImage = async (imageBuffer) => {
       let processedImage = sharp(imageBuffer);
@@ -124,7 +118,7 @@ async function combineImagesWithEffects() {
         background: { r: 0, g: 0, b: 0, alpha: 0 },
       },
     });
-    const focusedIndex = Math.floor(Math.random() * processedImages.length)+1;
+    const focusedIndex = Math.floor(Math.random() * processedImages.length) + 1;
 
     // Create composite operations with random opacities and rotations
     const compositeOperations = processedImages.map((img, index) => {
@@ -288,7 +282,7 @@ program
         `Name: ${params.name}`,
         `Symbol: ${params.symbol}`,
         `Description: ${params.description}`,
-        `Website: ${params.website}`,
+        `Website: ${params.website} (will be live in < 1 min)`,
         `Contract Address: ${params.publicKey}`,
       ];
 
@@ -322,7 +316,6 @@ program
         40
       );
 
-      
       const walletInfo = await collectWalletInfo();
 
       await typeText("\n☀️ Initiating deployment sequence...", 40);
@@ -369,7 +362,7 @@ program
       await typeText(`\n☀️ Transaction URL: ${result.transactionUrl}`, 30);
     } catch (error) {
       console.log("\n");
-      const errorBox = [`ERROR: ${error.message.padEnd(18)}`];
+      const errorBox = [`ERROR: ${error.message.padEnd(18)}. This is likely due to rate limiting, you can generate one token per minute.`];
       console.log(error.message);
 
       for (const line of errorBox) {
