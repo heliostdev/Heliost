@@ -362,7 +362,7 @@ program
       await typeText(`\n☀️ Transaction URL: ${result.transactionUrl}`, 30);
     } catch (error) {
       console.log("\n");
-      const errorBox = [`ERROR: ${error.message.padEnd(18)}. This is likely due to rate limiting, you can generate one token per minute.`];
+      const errorBox = [`ERROR: ${error.message.padEnd(18)}. (tip: could be rate limiting, you can generate one token per minute.)`];
       console.log(error.message);
 
       for (const line of errorBox) {
