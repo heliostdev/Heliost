@@ -29,13 +29,6 @@ heliost deploy-token --network solana
 - **AI Integration**: Get unique token concepts powered by advanced AI
 - **Auto Art Generation**: Creates custom token artwork that you can regenerate until satisfied
 - **Directory Listing**: Your token gets an automatic listing with a custom landing page
-- **Instant Buy**: Set up initial liquidity pool with your specified amount
-
-## Requirements
-
-- Solana wallet (public and private keys)
-- Initial buy amount (max 100 SOL)
-- Valid Solana network connection
 
 ## Support
 
