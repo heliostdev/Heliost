@@ -86,8 +86,8 @@ async function combineImagesWithEffects() {
           }),
 
         // Artistic effects
-        () => processedImage.blur(Math.random() * 2 + 0.3),
-        () => processedImage.sharpen(Math.random() * 5),
+        () => processedImage.blur((Math.random() * 2) + 0.3),
+        () => processedImage.sharpen((Math.random() * 5) + 0.01),
         () => processedImage.gamma(1 + Math.random() * 2), // Range 1.0-3.0
         () => processedImage.negate({ alpha: false }),
         () => processedImage.grayscale(),
