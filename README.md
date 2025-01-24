@@ -2,6 +2,8 @@
 
 Generate unique AI-powered tokens on Solana in seconds with a simple command line tool.
 
+![Flow](https://i.imgur.com/ZXjJK1H.png)
+
 ## What is Heliost?
 
 Heliost automatically creates meaningful tokens on Solana, complete with:
