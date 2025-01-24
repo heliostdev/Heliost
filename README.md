@@ -15,7 +15,7 @@ Heliost automatically creates meaningful tokens on Solana, complete with:
 
 1. Install Heliost:
 ```bash
-npm i heliost
+npm i -g heliost
 ```
 
 2. Create and deploy your token:

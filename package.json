@@ -1,6 +1,6 @@
 {
   "name": "heliost",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI for deploying tokens AI on Solana",
   "main": "index.js",
   "keywords": [
